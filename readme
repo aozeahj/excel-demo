@@ -1,0 +1,81 @@
+###1. 简介（brief intruoduction）
+> ExcelDemo 是基于 spreadsheet excel 库做的封装，支持报表的快速生成，节约开发成本。
+
+
+
+###2. 组成结构（structure）
+
+* `src` 是源码文件夹
+    * `Base.php` 是一个基类，实现类一些通用的方法
+    * `NormalTable.php` 普通报表类，支持将输入的数据原生的写入excel中
+    * `ReportFrom.php` 多维度合并报表类，支持对相同维度值进行行合并
+
+* `test` 测试文件夹 
+    
+     
+###3. 使用方法（usage）
+
+* 生成普通的表格类型 excel文件下载
+
+        use ExcelDemo\NormalTable;
+        
+        $powerExcel = new NormalTable();
+        
+        //只生成一个sheet
+        $sheet_title = ['姓名','班级'];//列名称
+        $sheet_data  = [['张三','1304'],['李四', '1304']]; //数据
+        $sheet_name  = '1304班级' // sheet 名
+        $filename    = '学生明细' //文件名
+        $save_path   = '/tmp' //excel 下载到本地，存放地址
+        $is_down     = true //是否直接下载，true：直接web下载， false：保存到本地
+        
+        $powerExcel->singleSheet($sheet_title, $sheet_data, $sheet_name, $filename, $save_path, $is_down);
+
+
+        //生成包含多个sheet excel文件
+        $excel_data = [[
+            'sheet_title' => $sheet_title,
+            'sheet_data'  => $sheet_data,
+            '$sheet_name' => $$sheet_name
+        ],[
+            'sheet_title' => $sheet_title,
+            'sheet_data'  => $sheet_data,
+            '$sheet_name' => $$sheet_name
+        ]]
+        
+        $powerExcel->numerouseSheet($excel_data, $filename, $save_path, true);
+
+* 支持报表中维度重复值合并类型 excel文件下载
+
+        use ExcelDemo\ReportFrom;
+                
+        $powerExcel = new ReportFrom();
+       
+        //只生成一个sheet
+        $sheet_title = ['城市','端','uv','pv']; //列名称
+        $sheet_data  = [['北京','app',222,10000],['北京', 'app',333,40000],['北京', 'apph5',333,40000], ['上海', 'apph5',333,40000],['杭州', 'apph5',333,40000],['杭州', 'pc',333,40000]]; //数据
+        $dim_cnt     = 2; //维度数量
+        $sheet_name  = '城市维度用户分布' // sheet 名
+        $filename    = '产品用户分析' //文件名
+        $save_path   = '/tmp' //excel 下载到本地，存放地址
+        $is_down     = true //是否直接下载，true：直接web下载， false：保存到本地
+        
+        $powerExcel->singleSheet($sheet_title, $dim_cnt, $sheet_data, $sheet_name, $filename, $save_path, $is_down);
+
+
+        //生成包含多个sheet excel文件
+        $excel_data = [[
+            'sheet_title' => $sheet_title,
+            'dim_cnt'    => $dim_cnt,
+            'sheet_data'  => $sheet_data,
+            '$sheet_name' => $$sheet_name
+        ],[
+            'sheet_title' => $sheet_title,
+            'dim_cnt'    => $dim_cnt,
+            'sheet_data'  => $sheet_data,
+            '$sheet_name' => $$sheet_name
+        ]]
+        
+        $powerExcel->numerouseSheet($excel_data, $filename, $save_path, true);
+
+        

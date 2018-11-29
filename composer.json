@@ -1,0 +1,22 @@
+{
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.org"
+        }
+    },
+    "name": "aozeahj/ExcelDemo",
+    "description": "more demo for excel table fastly product which based on phpspreadsheet",
+    "authors": [
+        {
+            "name": "aozeahj",
+            "email": "aozeahj@gmail.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet":"1.5.0"
+    },
+    "autoload": {
+      "classmap": ["src/"]
+    }
+}
