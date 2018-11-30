@@ -67,9 +67,9 @@ class ReportFrom extends Base{
                     }else{
                         $activeSheet->setCellValue($this->getPcoordinate($column_index), $column_value);
 
-                        if ($column_index == 0){
+                        if ($continue_compare){
                             $continue_compare = false;
-                            $this->mergeRegisterEntry($activeSheet);//合并记录需要合并行
+                            $this->mergeRegisterEntry($activeSheet, $column_index, $dim_cnt);//合并记录需要合并行
                         }
                     }
                 }
@@ -77,7 +77,7 @@ class ReportFrom extends Base{
                 $pre_sheet_row = $sheet_row;
                 $this->nextRow();
             }
-            $this->mergeRegisterEntry($activeSheet);//合并记录需要合并行
+            $this->clearMergeRegisterEntry($activeSheet);//合并记录需要合并行
         }
 
         //全局设置单元格格式
@@ -85,11 +85,8 @@ class ReportFrom extends Base{
         $column_cnt = count($sheet_title);
         $need_set_style_range = $this->getPrange(0, 2, $column_cnt, $row_cnt);
 
-
-        $activeSheet->getStyle($need_set_style_range)->getAlignment()->setHorizontal($this->getHorizontal());
-        $activeSheet->getStyle($need_set_style_range)->getAlignment()->setVertical($this->getVertical());
-
-
+        $this->setStyle($activeSheet, $need_set_style_range);
+        
         $writer = new Xlsx($preadSheet);
 
         if ($is_down){
@@ -155,9 +152,9 @@ class ReportFrom extends Base{
                         }else{
                             $activeSheet->setCellValue($this->getPcoordinate($column_index), $column_value);
 
-                            if ($column_index == 0){
+                            if ($continue_compare){
                                 $continue_compare = false;
-                                $this->mergeRegisterEntry($activeSheet);//合并记录需要合并行
+                                $this->mergeRegisterEntry($activeSheet, $column_index, $dim_cnt);//合并记录需要合并行
                             }
                         }
                     }
@@ -165,7 +162,7 @@ class ReportFrom extends Base{
                     $pre_sheet_row = $sheet_row;
                     $this->nextRow();
                 }
-                $this->mergeRegisterEntry($activeSheet);//合并记录需要合并行
+                $this->clearMergeRegisterEntry($activeSheet);//合并记录需要合并行
             }
 
             //全局设置单元格格式
@@ -174,9 +171,7 @@ class ReportFrom extends Base{
             $need_set_style_range = $this->getPrange(0, 2, $column_cnt, $row_cnt);
 
 
-            $activeSheet->getStyle($need_set_style_range)->getAlignment()->setHorizontal($this->getHorizontal());
-            $activeSheet->getStyle($need_set_style_range)->getAlignment()->setVertical($this->getVertical());
-
+            $this->setStyle($activeSheet, $need_set_style_range);
         }
 
         $writer = new Xlsx($preadSheet);
@@ -202,17 +197,33 @@ class ReportFrom extends Base{
         }
     }
 
-    private function mergeRegisterEntry(Worksheet &$activeSheet){
+    private function mergeRegisterEntry(Worksheet $activeSheet, int $column_index, int $column_cnt){
+       for ($index = $column_index; $index < $column_cnt; $index++){
+           if (isset($this->_merge_dim_entry[$index])){
+               $entry = $this->_merge_dim_entry[$index];
+               $range = $this->getPrange($index, $entry['start_row'], $index, $entry['end_row']);
+               $activeSheet->mergeCells($range);
+               $activeSheet->setCellValue($this->getPcoordinate($index, $entry['end_row']), $entry['value']);
+
+               unset($this->_merge_dim_entry[$index]);
+           }
+       }
+    }
+
+    public function clearMergeRegisterEntry(Worksheet $activeSheet){
         if (empty($this->_merge_dim_entry)){
             return ;
         }
-
         foreach ($this->_merge_dim_entry as $dim_index => $entry){
             $range = $this->getPrange($dim_index, $entry['start_row'], $dim_index, $entry['end_row']);
             $activeSheet->mergeCells($range);
             $activeSheet->setCellValue($this->getPcoordinate($dim_index, $entry['end_row']), $entry['value']);
         }
-
         $this->_merge_dim_entry = [];
+    }
+
+    public function setStyle(Worksheet $activeSheet, $range){
+        $activeSheet->getStyle($range)->getAlignment()->setHorizontal($this->getHorizontal());
+        $activeSheet->getStyle($range)->getAlignment()->setVertical($this->getVertical());
     }
 }
