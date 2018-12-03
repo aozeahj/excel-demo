@@ -78,4 +78,16 @@
         
         $powerExcel->numerouseSheet($excel_data, $filename, $save_path, true);
 
-        
+      
+###4. 使用composer 加载
+
+* 在composer.json require 中天添加 ` "aozeahj/excel-demo": "v0.1.1" `
+
+* 运行命令 composer update
+
+        {
+            "require": {
+                "aozeahj/excel-demo": "v0.1.1"
+            }
+        }
+  
