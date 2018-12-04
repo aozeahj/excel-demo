@@ -23,6 +23,7 @@ namespace ExcelDemo;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Base{
 
@@ -173,6 +174,15 @@ class Base{
         $file_path = $save_path . '/' . $filename.'.xlsx';
         $writer->save($file_path);
         return $file_path;
+    }
+
+    /**
+     * @param Worksheet $activeSheet
+     * @param $range
+     */
+    public function setStyle(Worksheet $activeSheet, $range){
+        $activeSheet->getStyle($range)->getAlignment()->setHorizontal($this->getHorizontal());
+        $activeSheet->getStyle($range)->getAlignment()->setVertical($this->getVertical());
     }
 
 }

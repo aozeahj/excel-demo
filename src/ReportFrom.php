@@ -45,7 +45,7 @@ class ReportFrom extends Base{
             $this->nextRow();
             //写第二行数据，标题
             foreach ($sheet_title as $column_index => $title){
-                $activeSheet->setCellValue($this->getPcoordinate($column_index), $title);
+                $activeSheet->setCellValue($this->getPcoordinate($column_index), ' ' . $title);
             }
 
             //换行
@@ -65,7 +65,7 @@ class ReportFrom extends Base{
                     if ($continue_compare && $column_index < $dim_cnt && $pre_column_value === $column_value){
                         $this->registerMergeEntry($column_index, $this->_row_index, $column_value);
                     }else{
-                        $activeSheet->setCellValue($this->getPcoordinate($column_index), $column_value);
+                        $activeSheet->setCellValue($this->getPcoordinate($column_index), ' ' . $column_value);
 
                         if ($continue_compare){
                             $continue_compare = false;
@@ -130,7 +130,7 @@ class ReportFrom extends Base{
                 $this->nextRow();
                 //写第二行数据，标题
                 foreach ($sheet_title as $column_index => $title){
-                    $activeSheet->setCellValue($this->getPcoordinate($column_index), $title);
+                    $activeSheet->setCellValue($this->getPcoordinate($column_index), ' ' . $title);
                 }
 
                 //换行
@@ -150,7 +150,7 @@ class ReportFrom extends Base{
                         if ($continue_compare && $column_index < $dim_cnt && $pre_column_value === $column_value){
                             $this->registerMergeEntry($column_index, $this->_row_index, $column_value);
                         }else{
-                            $activeSheet->setCellValue($this->getPcoordinate($column_index), $column_value);
+                            $activeSheet->setCellValue($this->getPcoordinate($column_index), ' ' . $column_value);
 
                             if ($continue_compare){
                                 $continue_compare = false;
@@ -203,7 +203,7 @@ class ReportFrom extends Base{
                $entry = $this->_merge_dim_entry[$index];
                $range = $this->getPrange($index, $entry['start_row'], $index, $entry['end_row']);
                $activeSheet->mergeCells($range);
-               $activeSheet->setCellValue($this->getPcoordinate($index, $entry['end_row']), $entry['value']);
+               $activeSheet->setCellValue($this->getPcoordinate($index, $entry['end_row']), ' ' . $entry['value']);
 
                unset($this->_merge_dim_entry[$index]);
            }
@@ -217,13 +217,8 @@ class ReportFrom extends Base{
         foreach ($this->_merge_dim_entry as $dim_index => $entry){
             $range = $this->getPrange($dim_index, $entry['start_row'], $dim_index, $entry['end_row']);
             $activeSheet->mergeCells($range);
-            $activeSheet->setCellValue($this->getPcoordinate($dim_index, $entry['end_row']), $entry['value']);
+            $activeSheet->setCellValue($this->getPcoordinate($dim_index, $entry['end_row']), ' ' . $entry['value']);
         }
         $this->_merge_dim_entry = [];
-    }
-
-    public function setStyle(Worksheet $activeSheet, $range){
-        $activeSheet->getStyle($range)->getAlignment()->setHorizontal($this->getHorizontal());
-        $activeSheet->getStyle($range)->getAlignment()->setVertical($this->getVertical());
     }
 }

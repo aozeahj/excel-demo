@@ -32,7 +32,7 @@ class NormalTable extends Base{
             $this->nextRow();
             //写第二行数据，标题
             foreach ($sheet_title as $column_index => $title){
-                $activeSheet->setCellValue($this->getPcoordinate($column_index), $title);
+                $activeSheet->setCellValue($this->getPcoordinate($column_index), ' ' . $title);
             }
 
             //换行
@@ -42,7 +42,7 @@ class NormalTable extends Base{
         if (!empty($sheet_data)){
             foreach ($sheet_data as $index => $sheet_row){
                 foreach ( $sheet_row as $column_index => $column_value){
-                    $activeSheet->setCellValue($this->getPcoordinate($column_index), $column_value);
+                    $activeSheet->setCellValue($this->getPcoordinate($column_index), ' ' . $column_value);
                 }
 
                 $this->nextRow();
@@ -54,10 +54,7 @@ class NormalTable extends Base{
         $column_cnt = count($sheet_title);
         $need_set_style_range = $this->getPrange(0, 2, $column_cnt, $row_cnt);
 
-
-        $activeSheet->getStyle($need_set_style_range)->getAlignment()->setHorizontal($this->getHorizontal());
-        $activeSheet->getStyle($need_set_style_range)->getAlignment()->setVertical($this->getVertical());
-
+        $this->setStyle($activeSheet, $need_set_style_range);
 
         $writer = new Xlsx($preadSheet);
 
@@ -101,7 +98,7 @@ class NormalTable extends Base{
                 $this->nextRow();
                 //写第二行数据，标题
                 foreach ($sheet_title as $column_index => $title){
-                    $activeSheet->setCellValue($this->getPcoordinate($column_index), $title);
+                    $activeSheet->setCellValue($this->getPcoordinate($column_index), ' ' . $title);
                 }
 
                 //换行
@@ -111,7 +108,7 @@ class NormalTable extends Base{
             if (!empty($sheet_data)){
                 foreach ($sheet_data as $index => $sheet_row){
                     foreach ( $sheet_row as $column_index => $column_value){
-                        $activeSheet->setCellValue($this->getPcoordinate($column_index), $column_value);
+                        $activeSheet->setCellValue($this->getPcoordinate($column_index), ' ' . $column_value);
                     }
 
                     $this->nextRow();
@@ -123,10 +120,7 @@ class NormalTable extends Base{
             $column_cnt = count($sheet_title);
             $need_set_style_range = $this->getPrange(0, 2, $column_cnt, $row_cnt);
 
-
-            $activeSheet->getStyle($need_set_style_range)->getAlignment()->setHorizontal($this->getHorizontal());
-            $activeSheet->getStyle($need_set_style_range)->getAlignment()->setVertical($this->getVertical());
-
+            $this->setStyle($activeSheet, $need_set_style_range);
         }
 
         $writer = new Xlsx($preadSheet);
@@ -138,31 +132,4 @@ class NormalTable extends Base{
         return $this->saveLocalExcel($writer, $filename, $save_path);
     }
 
-
-
-    private function registerMergeEntry($column_index, $row_index, $p_value){
-        if (isset($this->_merge_dim_entry[$column_index])){
-            $this->_merge_dim_entry[$column_index]['end_row'] = $row_index;
-        }else{
-            $this->_merge_dim_entry[$column_index] = array(
-                'start_row' => $row_index-1,
-                'end_row' => $row_index,
-                'value' => $p_value,
-            );
-        }
-    }
-
-    private function mergeRegisterEntry(Worksheet &$activeSheet){
-        if (empty($this->_merge_dim_entry)){
-            return ;
-        }
-
-        foreach ($this->_merge_dim_entry as $dim_index => $entry){
-            $range = $this->getPrange($dim_index, $entry['start_row'], $dim_index, $entry['end_row']);
-            $activeSheet->mergeCells($range);
-            $activeSheet->setCellValue($this->getPcoordinate($dim_index, $entry['end_row']), $entry['value']);
-        }
-
-        $this->_merge_dim_entry = [];
-    }
 }
