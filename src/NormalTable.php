@@ -15,11 +15,12 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class NormalTable extends Base{
 
-    public function singleSheet($sheet_title = array(), $sheet_data = array(), $sheetName = '', $filename = '', $save_path = '/tmp/', $is_down = true){
+    public function singleSheet($sheet_title = array(), $sheet_data = array(), $filename = '', $sheet_name = '', $save_path = '/tmp/', $is_down = true){
         $preadSheet = new Spreadsheet();
 
         $activeSheet = $preadSheet->getActiveSheet();//sheet 从0开始
-        $activeSheet->setTitle($sheetName);
+        $sheet_name = empty($sheet_name) ? 'sheet1' : $sheet_name;
+        $activeSheet->setTitle($sheet_name);
 
 
         if (!empty($sheet_title)){
@@ -81,7 +82,7 @@ class NormalTable extends Base{
                 $activeSheet = $preadSheet->createSheet($sheet_index);
             }
 
-            $sheet_name  = isset($sheet['sheet_name']) ? $sheet['sheet_name'] : 'sheet'. $sheet_index;
+            $sheet_name  = isset($sheet['sheet_name']) ? $sheet['sheet_name'] : 'sheet'. ($sheet_index+1);
             $sheet_title = isset($sheet['sheet_title']) ? $sheet['sheet_title'] : [];
             $sheet_data  = isset($sheet['sheet_data']) ? $sheet['sheet_data'] : [];
 
