@@ -156,8 +156,15 @@ class Base{
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      */
     protected function download(Xlsx $writer, $filename){
-        header('pragma:public');
-        header("Content-Disposition:attachment;filename=$filename.xlsx");
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="'. $filename .'.xlsx"');
+        header('Content-Transfer-Encoding: binary');
+        header('Connection: Keep-Alive');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+
         $writer->save('php://output');exit();
     }
 
